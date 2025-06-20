@@ -1,7 +1,10 @@
-const WebSocket = require("ws");
+const express = require("express");
 const http = require("http");
+const WebSocket = require("ws");
+const path = require("path");
 
-const server = http.createServer();
+const app = express();
+const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 const players = {};
@@ -17,13 +20,11 @@ wss.on("connection", (ws) => {
       }
     });
   });
-
-  ws.on("close", () => {
-    // 若要清除離線玩家，可自行補上清除邏輯
-  });
 });
 
-const PORT = process.env.PORT || 3000;  // ✅ 支援 Render
+app.use(express.static(path.join(__dirname, "public"))); // ✅ 必須！提供 index.html
+
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`✅ WebSocket Server running on port ${PORT}`);
+  console.log(`✅ Server running on port ${PORT}`);
 });
